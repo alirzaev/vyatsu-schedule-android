@@ -16,18 +16,23 @@ class _FavouriteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FavouriteGroupsModel>(
       builder: (context, favouriteGroupsModel, child) {
-        final isFavourite = favouriteGroupsModel.contains(_group);
-        final icon = Icon(isFavourite ? Icons.favorite : Icons.favorite_border);
+        return FutureBuilder<bool>(
+          future: favouriteGroupsModel.contains(_group),
+          builder: (context, AsyncSnapshot<bool> snapshot) {
+            final isFavourite = snapshot.hasData ? snapshot.data : false;
+            final icon = Icon(isFavourite ? Icons.favorite : Icons.favorite_border);
 
-        return IconButton(
-            icon: icon,
-            onPressed: () {
-              if (isFavourite) {
-                favouriteGroupsModel.remove(_group);
-              } else {
-                favouriteGroupsModel.add(_group);
-              }
-            });
+            return IconButton(
+                icon: icon,
+                onPressed: () {
+                  if (isFavourite) {
+                    favouriteGroupsModel.remove(_group);
+                  } else {
+                    favouriteGroupsModel.add(_group);
+                  }
+                });
+          },
+        );
       },
     );
   }

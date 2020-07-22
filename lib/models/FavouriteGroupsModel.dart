@@ -1,29 +1,26 @@
 import 'package:flutter/foundation.dart';
-import 'dart:collection';
 
 import '../utils/dto.dart' show Group;
+import '../repository/Database.dart' show DBProvider;
 
 class FavouriteGroupsModel extends ChangeNotifier {
-  final Set<Group> _favouriteGroups = {};
+  Future<List<Group>> get favouriteGroups async =>
+      DBProvider.db.all();
 
-  UnmodifiableListView<Group> get favouriteGroups =>
-      UnmodifiableListView<Group>(_favouriteGroups);
-
-  void add(Group group) {
-    if (!_favouriteGroups.contains(group)) {
-      _favouriteGroups.add(group);
+  Future<void> add(Group group) async {
+    bool exist = await DBProvider.db.exist(group);
+    if (!exist) {
+      await DBProvider.db.insert(group);
       notifyListeners();
     }
   }
 
-  void remove(Group group) {
-    if (_favouriteGroups.contains(group)) {
-      _favouriteGroups.remove(group);
+  Future<void> remove(Group group) async {
+      await DBProvider.db.delete(group);
       notifyListeners();
-    }
   }
 
-  bool contains(Group group) {
-    return _favouriteGroups.contains(group);
+  Future<bool> contains(Group group) async {
+    return (await DBProvider.db.exist(group));
   }
 }

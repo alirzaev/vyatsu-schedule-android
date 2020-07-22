@@ -18,17 +18,24 @@ class FavouriteGroupsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<FavouriteGroupsModel>(
       builder: (context, favouriteGroupsModel, child) {
-        final favouriteGroups = favouriteGroupsModel.favouriteGroups.toList();
+        return FutureBuilder<List<Group>>(future: favouriteGroupsModel.favouriteGroups,
+        builder: (context, AsyncSnapshot<List<Group>> snapshot) {
+          if (!snapshot.hasData) {
+            return CircularProgressIndicator();
+          }
 
-        return ListView.separated(
-            itemBuilder: (context, index) => ListTile(
-                  title: Text(favouriteGroups[index].name),
-                  onTap: () {
-                    _pushGroupSchedule(context, favouriteGroups[index]);
-                  },
-                ),
-            separatorBuilder: (context, index) => Divider(),
-            itemCount: favouriteGroups.length);
+          final favouriteGroups = snapshot.data.toList();
+
+          return ListView.separated(
+              itemBuilder: (context, index) => ListTile(
+                    title: Text(favouriteGroups[index].name),
+                    onTap: () {
+                      _pushGroupSchedule(context, favouriteGroups[index]);
+                    },
+                  ),
+              separatorBuilder: (context, index) => Divider(),
+              itemCount: favouriteGroups.length);
+        },);
       },
     );
   }

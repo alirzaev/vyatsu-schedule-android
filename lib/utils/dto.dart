@@ -20,6 +20,11 @@ class Group {
   Group.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'];
+  
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'name': name
+  };
 }
 
 class Faculty {
